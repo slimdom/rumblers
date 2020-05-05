@@ -9,29 +9,31 @@ public class PlayerMovement : MonoBehaviour
     PlayerInputActions input_action_;
     Vector2 movement_input_;
 	Rigidbody2D rbody_;
+	PlayerRenderer renderer_;
 	
     void Awake()
     {
 		rbody_ = GetComponent<Rigidbody2D>();
+		renderer_ = GetComponentInChildren<PlayerRenderer>();
         input_action_ = new PlayerInputActions();
 		input_action_.PlayerControls.Move.performed += ctx => movement_input_ = ctx.ReadValue<Vector2>();
     }
 
     void FixedUpdate()
     {
-		Vector2 currentPos = rbody_.position;
+		Vector2 current_pos = rbody_.position;
         float horz_move = movement_input_.x;
 		float vert_move = movement_input_.y;
 		
-        Vector2 inputVector = new Vector2(horz_move, vert_move);
-        inputVector = Vector2.ClampMagnitude(inputVector, 1);
+        Vector2 input_vector = new Vector2(horz_move, vert_move);
+        input_vector = Vector2.ClampMagnitude(input_vector, 1);
 		
-        Vector2 movement = inputVector * movementSpeed;
+        Vector2 movement = input_vector * movementSpeed;
 		
-        Vector2 newPos = currentPos + movement * Time.fixedDeltaTime;
+        Vector2 new_pos = current_pos + movement * Time.fixedDeltaTime;
 		
-        //isoRenderer.SetDirection(movement);
-        rbody_.MovePosition(newPos);
+        renderer_.SetDirection(movement);
+        rbody_.MovePosition(new_pos);
     }
 	
 	private void OnEnable()
